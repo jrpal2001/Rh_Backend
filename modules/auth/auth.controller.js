@@ -81,11 +81,9 @@ const createAuthController = (services) => ({
     res.cookie("accessToken", result.data.accessToken, getCookieOptions(getAccessTokenMaxAge()));
     res.cookie("refreshToken", result.data.refreshToken, getCookieOptions(getRefreshTokenMaxAge()));
 
-    // Return user info and tokens in response for both cookie and Bearer header support
+    // Return user info in response (tokens stored in HTTP-only cookies only)
     return response.success(res, result.message, {
       user: result.data.user,
-      accessToken: result.data.accessToken,
-      refreshToken: result.data.refreshToken,
     });
   }),
 
@@ -107,10 +105,7 @@ const createAuthController = (services) => ({
     res.cookie("accessToken", result.data.accessToken, getCookieOptions(getAccessTokenMaxAge()));
     res.cookie("refreshToken", result.data.refreshToken, getCookieOptions(getRefreshTokenMaxAge()));
 
-    return response.success(res, result.message, {
-      accessToken: result.data.accessToken,
-      refreshToken: result.data.refreshToken,
-    });
+    return response.success(res, result.message);
   }),
 });
 

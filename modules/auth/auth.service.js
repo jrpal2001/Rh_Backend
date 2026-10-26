@@ -154,6 +154,7 @@ export const verifyOtpForUser = async ({
   // Generate Access and Refresh Tokens
   const tokenPayload = {
     id: user._id.toString(),
+    ...(user.subAdminId ? { subAdminId: user.subAdminId } : {}),
     email: user.email,
     role,
     userType,
@@ -170,11 +171,14 @@ export const verifyOtpForUser = async ({
     data: {
       user: {
         id: user._id,
+        ...(user.subAdminId ? { subAdminId: user.subAdminId } : {}),
         name: user.name,
         email: user.email,
         phone: user.phone,
+        profileImage: user.profileImage || null,
         role,
         userType,
+        ...(user.permissions ? { permissions: user.permissions } : {}),
       },
       accessToken,
       refreshToken,
@@ -226,6 +230,7 @@ export const refreshForUser = async ({ refreshToken, Model, userType, role, disp
 
   const tokenPayload = {
     id: user._id.toString(),
+    ...(user.subAdminId ? { subAdminId: user.subAdminId } : {}),
     email: user.email,
     role,
     userType,
@@ -501,6 +506,7 @@ export const verifyOtpMultiUser = async ({ id, email, otp, configs, portalName }
 
   const tokenPayload = {
     id: user._id.toString(),
+    ...(user.subAdminId ? { subAdminId: user.subAdminId } : {}),
     email: user.email,
     role: matchedConfig.role,
     userType: matchedConfig.userType,
@@ -516,11 +522,14 @@ export const verifyOtpMultiUser = async ({ id, email, otp, configs, portalName }
     data: {
       user: {
         id: user._id,
+        ...(user.subAdminId ? { subAdminId: user.subAdminId } : {}),
         name: user.name,
         email: user.email,
         phone: user.phone,
+        profileImage: user.profileImage || null,
         role: matchedConfig.role,
         userType: matchedConfig.userType,
+        ...(user.permissions ? { permissions: user.permissions } : {}),
       },
       accessToken,
       refreshToken,
@@ -590,6 +599,7 @@ export const refreshMultiUser = async ({ refreshToken, configs, portalName }) =>
 
   const tokenPayload = {
     id: user._id.toString(),
+    ...(user.subAdminId ? { subAdminId: user.subAdminId } : {}),
     email: user.email,
     role: matchedConfig.role,
     userType: matchedConfig.userType,
