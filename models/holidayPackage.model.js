@@ -189,10 +189,14 @@ const holidayPackageSchema = new Schema(
       default: "2 - 10 Pax",
       trim: true, // e.g. "2 - 15 People", "Min 2 Adults"
     },
+    countries: {
+      type: [String],
+      default: [], // e.g. ["France", "Switzerland", "Italy"]
+    },
     countryOrRegion: {
       type: String,
-      required: true,
-      trim: true, // e.g. "Indonesia", "Asia"
+      default: "",
+      trim: true, // e.g. "Indonesia", "Asia", "France, Switzerland, Italy"
     },
     destination: {
       type: String,
@@ -298,6 +302,17 @@ holidayPackageSchema.pre("save", function () {
     this.dayByDayItinerary = this.detailedItinerary;
   } else if (this.dayByDayItinerary && this.dayByDayItinerary.length > 0) {
     this.detailedItinerary = this.dayByDayItinerary;
+  }
+
+  if (Array.isArray(this.countries) && this.countries.length > 0) {
+    if (!this.countryOrRegion) {
+      this.countryOrRegion = this.countries.join(", ");
+    }
+  } else if (this.countryOrRegion) {
+    this.countries = this.countryOrRegion
+      .split(",")
+      .map((c) => c.trim())
+      .filter(Boolean);
   }
 });
 

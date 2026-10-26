@@ -58,8 +58,8 @@ const getRefreshTokenMaxAge = () =>
 
 const getCookieOptions = (maxAge) => ({
   httpOnly: true,
-  secure: isProduction,
-  sameSite: isProduction ? "none" : "lax",
+  secure: true,
+  sameSite: "none",
   path: "/",
   ...(maxAge ? { maxAge } : {}),
 });
@@ -77,18 +77,22 @@ const createAuthController = (services) => ({
     const { id, email, otp } = req.body;
     const result = await services.verifyOtp({ id, email, otp });
 
-    // Save tokens directly into HTTP-only cookies using duration from .env
+    // Save tokens directly into HTTP-only cookies with SameSite=None and Secure for cross-origin support
     res.cookie("accessToken", result.data.accessToken, getCookieOptions(getAccessTokenMaxAge()));
     res.cookie("refreshToken", result.data.refreshToken, getCookieOptions(getRefreshTokenMaxAge()));
 
-    // Do NOT display tokens in the JSON response
-    return response.success(res, result.message, { user: result.data.user });
+    // Return user info and tokens in response for both cookie and Bearer header support
+    return response.success(res, result.message, {
+      user: result.data.user,
+      accessToken: result.data.accessToken,
+      refreshToken: result.data.refreshToken,
+    });
   }),
 
   logout: asyncHandler(async (req, res) => {
     const result = await services.logout(req.user.id);
 
-    // Clear cookies upon logout
+    // Clear cookies upon logout with identical cross-origin options
     res.clearCookie("accessToken", getCookieOptions());
     res.clearCookie("refreshToken", getCookieOptions());
 
@@ -103,8 +107,10 @@ const createAuthController = (services) => ({
     res.cookie("accessToken", result.data.accessToken, getCookieOptions(getAccessTokenMaxAge()));
     res.cookie("refreshToken", result.data.refreshToken, getCookieOptions(getRefreshTokenMaxAge()));
 
-    // Do NOT display tokens in the JSON response
-    return response.success(res, result.message);
+    return response.success(res, result.message, {
+      accessToken: result.data.accessToken,
+      refreshToken: result.data.refreshToken,
+    });
   }),
 });
 

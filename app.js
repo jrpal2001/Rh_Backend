@@ -16,6 +16,9 @@ import rolePermissionRoutes from './modules/roles-permissions/role-permission.ro
 
 const app = express();
 
+// Trust reverse proxy (Render, Vercel, AWS) for accurate HTTPS detection and cookies
+app.set('trust proxy', 1);
+
 // Security HTTP headers
 app.use(helmet());
 

@@ -37,6 +37,33 @@ const preparePackagePayload = (data) => {
     payload.dayByDayItinerary = itinerary;
   }
 
+  // Sync countries array and countryOrRegion string
+  let countriesList = [];
+  if (payload.countries !== undefined) {
+    if (typeof payload.countries === "string") {
+      try {
+        const parsed = JSON.parse(payload.countries);
+        countriesList = Array.isArray(parsed) ? parsed : [payload.countries];
+      } catch (e) {
+        countriesList = payload.countries.split(",");
+      }
+    } else if (Array.isArray(payload.countries)) {
+      countriesList = payload.countries;
+    }
+    countriesList = countriesList.map((c) => String(c).trim()).filter(Boolean);
+    payload.countries = countriesList;
+
+    if (!payload.countryOrRegion && countriesList.length > 0) {
+      payload.countryOrRegion = countriesList.join(", ");
+    }
+  } else if (payload.countryOrRegion) {
+    countriesList = String(payload.countryOrRegion)
+      .split(",")
+      .map((c) => c.trim())
+      .filter(Boolean);
+    payload.countries = countriesList;
+  }
+
   // Sync inclusions and exclusions
   if (
     payload.inclusionsAndExclusions &&
@@ -109,8 +136,13 @@ export const getAllHolidayPackagesService = async (query = {}) => {
   if (query.destination) {
     filter.destination = new RegExp(query.destination.trim(), "i");
   }
-  if (query.countryOrRegion) {
-    filter.countryOrRegion = new RegExp(query.countryOrRegion.trim(), "i");
+  if (query.countryOrRegion || query.country || query.countries) {
+    const countryTerm = (query.countryOrRegion || query.country || query.countries).trim();
+    const countryRegex = new RegExp(countryTerm, "i");
+    filter.$or = [
+      { countryOrRegion: countryRegex },
+      { countries: { $elemMatch: { $regex: countryRegex } } },
+    ];
   }
   if (query.tourType) {
     filter.tourType = new RegExp(query.tourType.trim(), "i");
@@ -124,12 +156,20 @@ export const getAllHolidayPackagesService = async (query = {}) => {
     if (query.maxPrice) filter.packagePrice.$lte = Number(query.maxPrice);
   }
   if (query.search) {
-    filter.$or = [
-      { packageName: new RegExp(query.search.trim(), "i") },
-      { destination: new RegExp(query.search.trim(), "i") },
-      { countryOrRegion: new RegExp(query.search.trim(), "i") },
-      { tourType: new RegExp(query.search.trim(), "i") },
+    const searchRegex = new RegExp(query.search.trim(), "i");
+    const searchCondition = [
+      { packageName: searchRegex },
+      { destination: searchRegex },
+      { countryOrRegion: searchRegex },
+      { countries: { $elemMatch: { $regex: searchRegex } } },
+      { tourType: searchRegex },
     ];
+    if (filter.$or) {
+      filter.$and = [{ $or: filter.$or }, { $or: searchCondition }];
+      delete filter.$or;
+    } else {
+      filter.$or = searchCondition;
+    }
   }
 
   const packages = await findAllHolidayPackages(filter);

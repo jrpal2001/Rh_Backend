@@ -89,10 +89,13 @@ export const createHolidayPackageSchema = Joi.object({
     "any.required": "Package name is required",
     "string.empty": "Package name cannot be empty",
   }),
-  countryOrRegion: Joi.string().required().trim().messages({
-    "any.required": "Country or region is required",
-    "string.empty": "Country or region cannot be empty",
-  }),
+  countries: Joi.alternatives()
+    .try(
+      Joi.array().items(Joi.string().trim().min(1)).min(1),
+      Joi.string().trim().min(1)
+    )
+    .optional(),
+  countryOrRegion: Joi.string().optional().allow("").trim(),
   destination: Joi.string().required().trim().messages({
     "any.required": "Destination is required",
     "string.empty": "Destination cannot be empty",
@@ -138,11 +141,27 @@ export const createHolidayPackageSchema = Joi.object({
   dayByDayItinerary: Joi.array().items(detailedItineraryItemSchema).optional().default([]),
 
   isActive: Joi.boolean().optional().default(true),
+}).custom((value, helpers) => {
+  const hasCountries = Array.isArray(value.countries)
+    ? value.countries.length > 0
+    : Boolean(value.countries && String(value.countries).trim());
+  const hasCountryOrRegion = Boolean(value.countryOrRegion && String(value.countryOrRegion).trim());
+
+  if (!hasCountries && !hasCountryOrRegion) {
+    return helpers.message("At least one country is required in 'countries' or 'countryOrRegion'");
+  }
+  return value;
 });
 
 export const updateHolidayPackageSchema = Joi.object({
   packageId: Joi.string().optional().trim(),
   packageName: Joi.string().optional().trim(),
+  countries: Joi.alternatives()
+    .try(
+      Joi.array().items(Joi.string().trim().min(1)),
+      Joi.string().trim()
+    )
+    .optional(),
   countryOrRegion: Joi.string().optional().trim(),
   destination: Joi.string().optional().trim(),
   duration: Joi.string().optional().trim(),
