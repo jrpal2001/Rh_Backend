@@ -5,6 +5,7 @@ const phoneRegex = /^[+]?[(]?[0-9]{1,4}[)]?[-\s./0-9]{6,15}$/;
 const objectIdRegex = /^[0-9a-fA-F]{24}$/;
 
 export const createStaffRoleSchema = Joi.object({
+  subAdminId: Joi.string().trim().optional(),
   name: Joi.string().trim().min(2).max(100).required().messages({
     "any.required": "Name is required",
     "string.empty": "Name cannot be empty",
@@ -21,6 +22,7 @@ export const createStaffRoleSchema = Joi.object({
 });
 
 export const updateStaffRoleSchema = Joi.object({
+  subAdminId: Joi.string().trim().optional(),
   name: Joi.string().trim().min(2).max(100).optional(),
   email: Joi.string().trim().lowercase().email().optional(),
   phone: Joi.string().trim().pattern(phoneRegex).allow("", null).optional(),

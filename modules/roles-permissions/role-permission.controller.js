@@ -17,6 +17,7 @@ import {
  */
 export const getAllStaffRoles = asyncHandler(async (req, res) => {
   const result = await getAllStaffRolesService(req.query);
+  console.log(result, "result")
   return response.success(res, result.message, result.data);
 });
 

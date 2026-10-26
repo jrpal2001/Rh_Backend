@@ -13,6 +13,7 @@ import holidayRoutes from './modules/holiday/holiday.routes.js';
 import visaRoutes from './modules/visa/visa.routes.js';
 import companyRoutes from './modules/companies/company.routes.js';
 import rolePermissionRoutes from './modules/roles-permissions/role-permission.routes.js';
+import masterFormRoutes from './modules/masterForm/masterForm.routes.js';
 
 const app = express();
 
@@ -121,6 +122,8 @@ app.use(`${appConfig.apiPrefix}/holiday`, holidayRoutes);
 app.use(`${appConfig.apiPrefix}/visa`, visaRoutes);
 app.use(`${appConfig.apiPrefix}/company`, companyRoutes);
 app.use(`${appConfig.apiPrefix}/roles-permissions`, rolePermissionRoutes);
+app.use(`${appConfig.apiPrefix}/master-form`, masterFormRoutes);
+app.use(`${appConfig.apiPrefix}/masterForm`, masterFormRoutes);
 // app.use(`${appConfig.apiPrefix}/applications`, applicationRoutes);
 // etc.
 

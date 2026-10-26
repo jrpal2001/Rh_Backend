@@ -37,6 +37,7 @@ export const getAllStaffRolesService = async (query = {}) => {
   if (search) {
     const searchRegex = new RegExp(escapeRegex(search), "i");
     filter.$or = [
+      { subAdminId: searchRegex },
       { name: searchRegex },
       { email: searchRegex },
       { phone: searchRegex },

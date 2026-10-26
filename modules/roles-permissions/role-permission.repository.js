@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import SubAdmin from "../../models/subAdmin.model.js";
 import StaffAssignHistory from "../../models/staffAssignHistory.model.js";
 import BookingApplication from "../../models/bookingApplication.model.js";
@@ -10,7 +11,10 @@ const EXCLUDE_TOKENS = "-accessToken -refreshToken";
 // ============================================================================
 
 export const findStaffById = async (id) => {
-  return await SubAdmin.findById(id)
+  if (!id) return null;
+  const isObjectId = mongoose.Types.ObjectId.isValid(id);
+  const query = isObjectId ? { _id: id } : { subAdminId: new RegExp(`^${id}$`, "i") };
+  return await SubAdmin.findOne(query)
     .select(EXCLUDE_TOKENS)
     .populate({
       path: "assignedApplications.applicationId",
@@ -46,7 +50,9 @@ export const createStaff = async (data) => {
 };
 
 export const updateStaffById = async (id, updateData) => {
-  return await SubAdmin.findByIdAndUpdate(id, updateData, {
+  const isObjectId = mongoose.Types.ObjectId.isValid(id);
+  const query = isObjectId ? { _id: id } : { subAdminId: new RegExp(`^${id}$`, "i") };
+  return await SubAdmin.findOneAndUpdate(query, updateData, {
     new: true,
     runValidators: true,
   })
@@ -55,7 +61,9 @@ export const updateStaffById = async (id, updateData) => {
 };
 
 export const deleteStaffById = async (id) => {
-  return await SubAdmin.findByIdAndDelete(id).select(EXCLUDE_TOKENS);
+  const isObjectId = mongoose.Types.ObjectId.isValid(id);
+  const query = isObjectId ? { _id: id } : { subAdminId: new RegExp(`^${id}$`, "i") };
+  return await SubAdmin.findOneAndDelete(query).select(EXCLUDE_TOKENS);
 };
 
 export const unassignStaffFromApplications = async (staffId) => {

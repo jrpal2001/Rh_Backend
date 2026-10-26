@@ -2,6 +2,12 @@ import mongoose from "mongoose";
 
 const subAdminSchema = new mongoose.Schema(
   {
+    subAdminId: {
+      type: String,
+      unique: true,
+      trim: true,
+      index: true,
+    },
     name: {
       type: String,
       required: true,
@@ -76,4 +82,42 @@ const subAdminSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export default mongoose.model("SubAdmin", subAdminSchema);
+/**
+ * Helper to compute the next sequential SubAdmin ID (e.g. RHS1, RHS2, RHS3...)
+ */
+export const getNextSubAdminId = async (model) => {
+  const TargetModel = model || mongoose.model("SubAdmin");
+  const staffList = await TargetModel.find(
+    { subAdminId: { $exists: true, $ne: null } },
+    { subAdminId: 1 }
+  ).lean();
+
+  let maxNum = 0;
+  for (const staff of staffList) {
+    if (staff.subAdminId) {
+      const match = String(staff.subAdminId).match(/^RHS(\d+)$/i);
+      if (match && match[1]) {
+        const num = parseInt(match[1], 10);
+        if (!isNaN(num) && num > maxNum) {
+          maxNum = num;
+        }
+      }
+    }
+  }
+
+  return `RHS${maxNum + 1}`;
+};
+
+/**
+ * Pre-validate hook: auto-assign sequential subAdminId if not provided
+ */
+subAdminSchema.pre("validate", async function () {
+  if (!this.subAdminId) {
+    this.subAdminId = await getNextSubAdminId(this.constructor);
+  }
+});
+
+const SubAdmin = mongoose.model("SubAdmin", subAdminSchema);
+
+export default SubAdmin;
+export { SubAdmin };
