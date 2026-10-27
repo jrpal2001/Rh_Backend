@@ -83,7 +83,8 @@ router.put(
 );
 
 /**
- * Delete company (soft delete: sets status to 'inactive')
+ * Delete company by ID
+ * (Super Admin only)
  */
 router.delete(
   "/:id",

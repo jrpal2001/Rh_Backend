@@ -45,7 +45,7 @@ export const updateCompany = asyncHandler(async (req, res) => {
 });
 
 /**
- * Delete company (sets status to inactive)
+ * Delete company by ID
  * (Super Admin only)
  */
 export const deleteCompany = asyncHandler(async (req, res) => {

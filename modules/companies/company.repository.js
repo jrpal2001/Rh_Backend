@@ -66,6 +66,14 @@ export const updateCompany = async (id, updateData) => {
 };
 
 /**
+ * Delete company permanently by ID
+ * @param {string} id
+ */
+export const deleteCompanyById = async (id) => {
+  return await Company.findByIdAndDelete(id).select("-accessToken -refreshToken");
+};
+
+/**
  * Soft delete company (set status to inactive)
  * @param {string} id
  */
@@ -84,5 +92,6 @@ export default {
   countCompanies,
   createCompany,
   updateCompany,
+  deleteCompanyById,
   softDeleteCompany,
 };

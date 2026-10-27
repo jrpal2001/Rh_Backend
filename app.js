@@ -14,6 +14,7 @@ import visaRoutes from './modules/visa/visa.routes.js';
 import companyRoutes from './modules/companies/company.routes.js';
 import rolePermissionRoutes from './modules/roles-permissions/role-permission.routes.js';
 import masterFormRoutes from './modules/masterForm/masterForm.routes.js';
+import leadRoutes from './modules/leads/lead.routes.js';
 
 const app = express();
 
@@ -123,6 +124,7 @@ app.use(`${appConfig.apiPrefix}/visa`, visaRoutes);
 app.use(`${appConfig.apiPrefix}/company`, companyRoutes);
 app.use(`${appConfig.apiPrefix}/staff`, rolePermissionRoutes);
 app.use(`${appConfig.apiPrefix}/form`, masterFormRoutes);
+app.use(`${appConfig.apiPrefix}/lead`, leadRoutes);
 // app.use(`${appConfig.apiPrefix}/applications`, applicationRoutes);
 // etc.
 

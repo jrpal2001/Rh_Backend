@@ -9,6 +9,7 @@ import {
   countCompanies,
   createCompany,
   updateCompany,
+  deleteCompanyById,
   softDeleteCompany,
 } from "./company.repository.js";
 import { ALLOWED_SORT_FIELDS } from "./company.constants.js";
@@ -188,7 +189,7 @@ export const updateCompanyService = async (id, updateData) => {
 };
 
 /**
- * Soft delete company by setting status to inactive
+ * Delete company permanently by ID
  * @param {string} id
  */
 export const deleteCompanyService = async (id) => {
@@ -201,11 +202,11 @@ export const deleteCompanyService = async (id) => {
     throw new NotFoundError("Company not found");
   }
 
-  const deactivatedCompany = await softDeleteCompany(id);
+  const deletedCompany = await deleteCompanyById(id);
 
   return {
-    message: "Company deactivated successfully",
-    data: deactivatedCompany,
+    message: "Company deleted successfully",
+    data: deletedCompany,
   };
 };
 
