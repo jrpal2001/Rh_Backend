@@ -122,7 +122,7 @@ app.use(`${appConfig.apiPrefix}/holiday`, holidayRoutes);
 app.use(`${appConfig.apiPrefix}/visa`, visaRoutes);
 app.use(`${appConfig.apiPrefix}/company`, companyRoutes);
 app.use(`${appConfig.apiPrefix}/staff`, rolePermissionRoutes);
-app.use(`${appConfig.apiPrefix}/master`, masterFormRoutes);
+app.use(`${appConfig.apiPrefix}/form`, masterFormRoutes);
 // app.use(`${appConfig.apiPrefix}/applications`, applicationRoutes);
 // etc.
 
