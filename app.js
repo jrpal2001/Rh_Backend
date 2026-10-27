@@ -92,7 +92,7 @@ app.get(['/favicon.ico', '/favicon.png'], (req, res) => res.status(204).end());
 app.get('/', (req, res) => {
   res.status(200).json({
     success: true,
-    message: `Welcome to ${appConfig.appName} API`,
+    message: `Wellcome to ${appConfig.appName} API`,
     version: '1.0.0',
     apiPrefix: appConfig.apiPrefix,
   });
