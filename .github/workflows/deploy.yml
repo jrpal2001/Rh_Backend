@@ -28,9 +28,17 @@ jobs:
           ENV_FILE: ${{ secrets.ENV_FILE }}
         run: |
           set -euo pipefail
+
+          if [ -z "$ENV_FILE" ]; then
+            echo "ERROR: GitHub secret ENV_FILE is empty or missing."
+            exit 1
+          fi
+
           printf '%s' "$ENV_FILE" > .env
           test -s .env
-          chmod 600 .env
+
+          # SCP runs in a container and must be able to read this file.
+          chmod 644 .env
 
       - name: Upload environment file to EC2
         uses: appleboy/scp-action@v0.1.7
@@ -58,15 +66,25 @@ jobs:
             cd /home/ubuntu/RHglobal-backend
 
             echo "Checking environment file..."
-            test -s .env
+            if [ ! -s .env ]; then
+              echo "ERROR: .env is missing or empty."
+              exit 1
+            fi
+
+            echo "Setting environment file ownership and permissions..."
+            sudo chown ubuntu:ubuntu .env
             chmod 600 .env
 
-            echo "Pulling latest code..."
+            echo "Updating repository..."
             git fetch origin main
             git reset --hard origin/main
 
-            echo "Installing dependencies..."
-            npm ci
+            echo "Verifying environment file still exists..."
+            test -s .env
+            chmod 600 .env
+
+            echo "Installing production dependencies..."
+            npm ci --omit=dev
 
             echo "Restarting backend..."
             if pm2 describe backend >/dev/null 2>&1; then
@@ -75,9 +93,10 @@ jobs:
               pm2 start npm --name backend -- start
             fi
 
+            echo "Saving PM2 process list..."
             pm2 save
 
-            echo "Deployment completed."
+            echo "Checking backend status..."
             pm2 status backend
 
-
+            echo "Deployment completed successfully."
