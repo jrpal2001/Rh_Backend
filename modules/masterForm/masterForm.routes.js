@@ -35,7 +35,7 @@ const router = express.Router();
  * Accessible directly in browser & frontend dropdowns
  */
 router.get(
-  ["/checklist", "/checklists"],
+  ["/checklist"],
   validate(getChecklistQuerySchema, "query"),
   getAllChecklists
 );
@@ -43,14 +43,14 @@ router.get(
 /**
  * Display single checklist by ID
  */
-router.get(["/checklist/:id", "/checklists/:id"], getChecklistById);
+router.get(["/checklist/:id"], getChecklistById);
 
 /**
  * Create a new checklist
  * (Super Admin & Staff only)
  */
 router.post(
-  ["/checklist", "/checklists"],
+  ["/checklist"],
   authenticate,
   authorize(Roles.SUPER_ADMIN, Roles.STAFF),
   validate(createChecklistSchema),
@@ -62,7 +62,7 @@ router.post(
  * (Super Admin & Staff only)
  */
 router.patch(
-  ["/checklist/:id", "/checklists/:id"],
+  ["/checklist/:id"],
   authenticate,
   authorize(Roles.SUPER_ADMIN, Roles.STAFF),
   validate(updateChecklistSchema),
@@ -70,7 +70,7 @@ router.patch(
 );
 
 router.put(
-  ["/checklist/:id", "/checklists/:id"],
+  ["/checklist/:id"],
   authenticate,
   authorize(Roles.SUPER_ADMIN, Roles.STAFF),
   validate(updateChecklistSchema),
@@ -82,7 +82,7 @@ router.put(
  * (Super Admin & Staff only)
  */
 router.delete(
-  ["/checklist/:id", "/checklists/:id"],
+  ["/checklist/:id"],
   authenticate,
   authorize(Roles.SUPER_ADMIN, Roles.STAFF),
   deleteChecklist
@@ -97,7 +97,7 @@ router.delete(
  * Accessible directly in browser & frontend dropdowns
  */
 router.get(
-  ["/docs", "/doc", "/documents"],
+  ["/docs"],
   validate(getDocsQuerySchema, "query"),
   getAllDocs
 );
@@ -105,14 +105,14 @@ router.get(
 /**
  * Display single document by ID
  */
-router.get(["/docs/:id", "/doc/:id", "/documents/:id"], getDocById);
+router.get(["/docs/:id"], getDocById);
 
 /**
  * Create a new document
  * (Super Admin & Staff only)
  */
 router.post(
-  ["/docs", "/doc", "/documents"],
+  ["/docs"],
   authenticate,
   authorize(Roles.SUPER_ADMIN, Roles.STAFF),
   validate(createDocsSchema),
@@ -124,7 +124,7 @@ router.post(
  * (Super Admin & Staff only)
  */
 router.patch(
-  ["/docs/:id", "/doc/:id", "/documents/:id"],
+  ["/docs/:id"],
   authenticate,
   authorize(Roles.SUPER_ADMIN, Roles.STAFF),
   validate(updateDocsSchema),
@@ -132,7 +132,7 @@ router.patch(
 );
 
 router.put(
-  ["/docs/:id", "/doc/:id", "/documents/:id"],
+  ["/docs/:id"],
   authenticate,
   authorize(Roles.SUPER_ADMIN, Roles.STAFF),
   validate(updateDocsSchema),
@@ -144,7 +144,7 @@ router.put(
  * (Super Admin & Staff only)
  */
 router.delete(
-  ["/docs/:id", "/doc/:id", "/documents/:id"],
+  ["/docs/:id"],
   authenticate,
   authorize(Roles.SUPER_ADMIN, Roles.STAFF),
   deleteDoc

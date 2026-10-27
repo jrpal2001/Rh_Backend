@@ -40,9 +40,9 @@ const defaultOrigins = [
 const configuredOrigins = Array.isArray(appConfig.allowedOrigins)
   ? appConfig.allowedOrigins
   : (appConfig.frontendUrl || '')
-      .split(',')
-      .map((u) => u.trim().replace(/\/+$/, ''))
-      .filter(Boolean);
+    .split(',')
+    .map((u) => u.trim().replace(/\/+$/, ''))
+    .filter(Boolean);
 
 const allowedOrigins = Array.from(new Set([...defaultOrigins, ...configuredOrigins]));
 
@@ -121,9 +121,8 @@ app.use(`${appConfig.apiPrefix}/auth`, authRoutes);
 app.use(`${appConfig.apiPrefix}/holiday`, holidayRoutes);
 app.use(`${appConfig.apiPrefix}/visa`, visaRoutes);
 app.use(`${appConfig.apiPrefix}/company`, companyRoutes);
-app.use(`${appConfig.apiPrefix}/roles-permissions`, rolePermissionRoutes);
-app.use(`${appConfig.apiPrefix}/master-form`, masterFormRoutes);
-app.use(`${appConfig.apiPrefix}/masterForm`, masterFormRoutes);
+app.use(`${appConfig.apiPrefix}/staff`, rolePermissionRoutes);
+app.use(`${appConfig.apiPrefix}/master`, masterFormRoutes);
 // app.use(`${appConfig.apiPrefix}/applications`, applicationRoutes);
 // etc.
 
